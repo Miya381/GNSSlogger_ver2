@@ -66,6 +66,12 @@ public class FileLogger implements GnssListener {
     private boolean firstOBSforAcc = true;
     private ArrayList<Integer> UsedInFixList = new ArrayList<Integer>() ;
     private boolean RINEX_NAV_ION_OK = false;
+    private int gnsstimeclock_a;
+    private int gnsstimeclock_b;
+    private int gnsstimeclock_c;
+    private int gnsstimeclock_d;
+    private int gnsstimeclock_e;
+    private double gnsstimeclock_f;
 
     //GLONASS系の補正情報
     private int[] GLONASSFREQ = {1,-4,5,6,1,-4,5,6,-2,-7,0,-1,-2,-7,0,-1,4,-3,3,2,4,-3,3,2};
@@ -893,7 +899,7 @@ public class FileLogger implements GnssListener {
             }
         }
     }
-    public void onSensorListener(String listener,float azimuth,float accZ,float altitude){
+    public void onSensorListener(String listener,float roll, float pitch, float azimuth,float accZ,float Altitude, float MagX,float MagY,float MagZ,float APIAzi){
         synchronized (mFileAccAzLock) {
             if (mFileAccAzWriter == null || SettingsFragment.ResearchMode == false || !SettingsFragment.EnableSensorLog) {
                 return;
@@ -901,8 +907,13 @@ public class FileLogger implements GnssListener {
             else{
                 if(listener == "") {
                     try {
+
+                        double Azideg = Math.toDegrees(azimuth);
+                        double Pitchdeg = Math.toDegrees(pitch);
+                        double Rolldeg = Math.toDegrees(roll);
                         String SensorStream =
-                                String.format("%f,%f,%f", (float) (accZ * Math.sin(azimuth)), (float) (accZ * Math.cos(azimuth)), altitude);
+                                String.format("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f", (float) (1 * Math.sin(azimuth)),(float) (1 * Math.cos(azimuth)),Altitude,Pitchdeg,Rolldeg,Azideg,accZ,MagX,MagY,MagZ,APIAzi);
+
                         mFileAccAzWriter.write(SensorStream);
                         mFileAccAzWriter.newLine();
                     } catch (IOException e) {
@@ -981,6 +992,8 @@ public class FileLogger implements GnssListener {
         String SensorStream = "";
         boolean firstOBS = true;
         int satnumber = 0;
+
+
         if(SettingsFragment.RINEX303){
             String OBSTime = "";
             GnssClock gnssClock = event.getClock();
@@ -1056,7 +1069,14 @@ public class FileLogger implements GnssListener {
                             OBSTime = String.format("> %4d %2d %2d %2d %2d%11.7f  0", value.Y, value.M, value.D, value.h, value.m, value.s);
                             SensorStream =
                                     String.format("%6d,%6d,%6d,%6d,%6d,%13.7f", value.Y, value.M, value.D, value.h, value.m, value.s);
-                            //firstOBS = false;
+                            gnsstimeclock_a = value.Y;
+                            gnsstimeclock_b = value.M;
+                            gnsstimeclock_c = value.D;
+                            gnsstimeclock_d = value.h;
+                            gnsstimeclock_e = value.m;
+                            gnsstimeclock_f = value.s;
+                            Time.append(OBSTime);
+                            firstOBS = false;
                         }
                         //GPSのPRN番号と時刻用String
                         String prn = "";
@@ -1216,6 +1236,12 @@ public class FileLogger implements GnssListener {
                             String OBSTime = String.format(" %2d %2d %2d %2d %2d%11.7f  0", value.Y - 2000, value.M, value.D, value.h, value.m, value.s);
                             SensorStream =
                                     String.format("%6d,%6d,%6d,%6d,%6d,%13.7f", value.Y, value.M, value.D, value.h, value.m, value.s);
+                            gnsstimeclock_a = value.Y;
+                            gnsstimeclock_b = value.M;
+                            gnsstimeclock_c = value.D;
+                            gnsstimeclock_d = value.h;
+                            gnsstimeclock_e = value.m;
+                            gnsstimeclock_f = value.s;
                             Time.append(OBSTime);
                             firstOBS = false;
                         }

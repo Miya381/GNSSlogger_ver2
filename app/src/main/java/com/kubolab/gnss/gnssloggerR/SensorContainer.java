@@ -367,7 +367,10 @@ public class SensorContainer {
                     if (currentAccelerationZValues <= -1.5) {
                         counter++;
                         passcounter = false;
-                        mFileLogger.onSensorListener("", (float) mAzimuthZ,1,LastAltitude - Altitude);
+                        //　CSVファイル出力
+                        final float APIAzi = radianToDegrees(orientationValues[0]);
+                        mFileLogger.onSensorListener("", (float) mPitchX, (float) mRollY, (float) mAzimuthZ, counter, Altitude, MagX, MagY, MagZ, APIAzi);
+
                     }
                 }else{
                     if (currentAccelerationZValues >= 1.0) {
