@@ -15,6 +15,7 @@ import java.util.List;
  * @author
  *
  */
+//確認let's note
 public class SensorContainer {
     //センサ生データ用
     private String sensorRaw[] = new String[6];
