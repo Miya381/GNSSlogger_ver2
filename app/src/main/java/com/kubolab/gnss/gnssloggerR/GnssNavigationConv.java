@@ -212,6 +212,7 @@ public class GnssNavigationConv {
         double toeScaled = toe * POW_2_4;
 
     }
+
 /*
     private void handleThirdSubframe(byte prn, byte[] rawData) {
 

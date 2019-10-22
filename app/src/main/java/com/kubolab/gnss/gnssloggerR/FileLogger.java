@@ -1076,7 +1076,6 @@ public class FileLogger implements GnssListener {
                             gnsstimeclock_e = value.m;
                             gnsstimeclock_f = value.s;
                             Time.append(OBSTime);
-                            firstOBS = false;
                         }
                         //GPSのPRN番号と時刻用String
                         String prn = "";
