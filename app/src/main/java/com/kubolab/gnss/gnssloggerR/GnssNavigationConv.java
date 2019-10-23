@@ -12,9 +12,10 @@ import android.location.GnssNavigationMessage;
 import java.util.concurrent.TimeUnit;
 
 
-/**
+/*
  * Created by KuboLab on 2017/12/04.
  */
+
 //テスト
 public class GnssNavigationConv {
     private static final byte IONOSPHERIC_PARAMETERS_PAGE_18_SV_ID = 56;
