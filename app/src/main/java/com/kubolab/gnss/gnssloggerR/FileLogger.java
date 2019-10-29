@@ -65,6 +65,11 @@ public class FileLogger implements GnssListener {
     private boolean notenoughsat = false;
     private boolean firstOBSforAcc = true;
     private ArrayList<Integer> UsedInFixList = new ArrayList<Integer>() ;
+    private ArrayList<String> arrayList1= new ArrayList<>();
+    private ArrayList<Double>longitudekml=new ArrayList<>();
+    private ArrayList<Double>latitudekml=new ArrayList<>();
+    private ArrayList<Double>altitudekml=new ArrayList<>();
+    private ArrayList<String> gpstkml=new ArrayList<String>();
     private boolean RINEX_NAV_ION_OK = false;
     private int gnsstimeclock_a;
     private int gnsstimeclock_b;
@@ -660,6 +665,28 @@ public class FileLogger implements GnssListener {
         try {
             mFileSubWriter.write("    </coordinates>\n  </LineString>\n</Placemark>\n</Document>\n</kml>\n");
             mFileSubWriter.newLine();
+            for (int i=0; i<arrayList1.size(); i++){
+                mFileSubWriter.write(" <Placemark>\n");
+                mFileSubWriter.write("<name>"+arrayList1.get(i)+"\"</name>\"");
+                mFileSubWriter.newLine();
+                // mFileSubWriter.write("<TimeStamp><when>"+arrayList1.get(i)+"</when></TimeStamp>");
+                //mFileSubWriter.newLine();
+                mFileSubWriter.write("<Style>\n<BalloonStyle><text><![CDATA[$[description]]]></text></BalloonStyle>\n" +
+                        "    <LabelStyle><scale>0</scale></LabelStyle>\n" +
+                        "    <IconStyle>\n" +
+                        "      <scale>0.3</scale>\n" +
+                        "      <color>ffFFFF00</color>\n" +
+                        "      <Icon><href>http://maps.google.com/mapfiles/kml/pal2/icon26.png</href></Icon>\n" +
+                        "    </IconStyle>\n" +
+                        "  </Style>\n" +
+                        "  <Point>" );
+                mFileSubWriter.newLine();
+                mFileSubWriter.write("<coordinates>"+longitudekml.get(i)+","+latitudekml.get(i)+","+altitudekml.get(i)+ "</coordinates>");
+                mFileSubWriter.write("</Point>");
+                mFileSubWriter.newLine();
+                mFileSubWriter.write("</Placemark>");
+            }mFileSubWriter.newLine();
+            mFileSubWriter.write("</Folder>\n  </Document>\n  </kml>");
         }catch (IOException e){
             Toast.makeText(mContext, "ERROR_WRITINGFOTTER_FILE", Toast.LENGTH_SHORT).show();
             logException(ERROR_WRITING_FILE, e);
@@ -755,6 +782,9 @@ public class FileLogger implements GnssListener {
                                         location.getLongitude(),
                                         location.getLatitude(),
                                         location.getAltitude());
+                        String gnsstime=
+                                String.format("%d,%d,%d,%d,%d,%13.7f",gnsstimeclock_a,gnsstimeclock_b,gnsstimeclock_c,gnsstimeclock_d,gnsstimeclock_e,gnsstimeclock_f);
+                        arrayList1.add(gnsstime);
                         mFileSubWriter.write(locationStream);
                         mFileSubWriter.newLine();
                     }catch (IOException e){
@@ -1130,7 +1160,7 @@ public class FileLogger implements GnssListener {
                             index = index + 235;
                         }
                         if(!SettingsFragment.usePseudorangeRate && measurement.getAccumulatedDeltaRangeState() != GnssMeasurement.ADR_STATE_VALID){
-                            CURRENT_SMOOTHER_RATE[index] = 1.0;
+                            CURRENT_SMOOTHER_RATE[index] = 0.99;
                         }
                         //Pseudorange Smoother
                         if(SettingsFragment.usePseudorangeSmoother &&  prm != 0.0){
