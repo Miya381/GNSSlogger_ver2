@@ -910,6 +910,35 @@ public class FileLogger implements GnssListener {
                 if(mFileNavWriter == null){
                     return;
                 }
+
+                StringBuilder builder = new StringBuilder("Nav");
+                builder.append(RECORD_DELIMITER);
+                builder.append(navigationMessage.getSvid());
+                builder.append(RECORD_DELIMITER);
+                builder.append(navigationMessage.getType());
+                builder.append(RECORD_DELIMITER);
+
+                int status = navigationMessage.getStatus();
+                builder.append(status);
+                builder.append(RECORD_DELIMITER);
+                builder.append(navigationMessage.getMessageId());
+                builder.append(RECORD_DELIMITER);
+                builder.append(navigationMessage.getSubmessageId());
+                byte[] data = navigationMessage.getData();
+
+                for (byte word : data) {
+                    builder.append(data);
+                    builder.append(RECORD_DELIMITER);
+                    builder.append(word);
+                }
+
+                try {
+                    mFileNavWriter.write(builder.toString());
+                    mFileNavWriter.newLine();
+                } catch (IOException e) {
+                    logException(ERROR_WRITING_FILE, e);
+                }
+
                 /*try {
                     if(RINEX_NAV_ION_OK == false) {
                         StringBuilder NAV_ION = new StringBuilder();
