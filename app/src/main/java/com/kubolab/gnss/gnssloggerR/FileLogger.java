@@ -45,7 +45,7 @@ public class FileLogger implements GnssListener {
     private final Context mContext;
 
     private final Object mFileLock = new Object();
-    private  final Object mFileSubLock = new Object();
+    private final Object mFileSubLock = new Object();
     private final Object mFileAccAzLock = new Object();
     private final Object mFileNmeaLock = new Object();
     private final Object mFileNavLock = new Object();
@@ -665,6 +665,7 @@ public class FileLogger implements GnssListener {
         try {
             mFileSubWriter.write("    </coordinates>\n  </LineString>\n</Placemark>\n</Document>\n</kml>\n");
             mFileSubWriter.newLine();
+
             for (int i=0; i<arrayList1.size(); i++){
                 mFileSubWriter.write(" <Placemark>\n");
                 mFileSubWriter.write("<name>"+arrayList1.get(i)+"\"</name>\"");
@@ -782,6 +783,11 @@ public class FileLogger implements GnssListener {
                                         location.getLongitude(),
                                         location.getLatitude(),
                                         location.getAltitude());
+
+                        longitudekml.add(location.getLongitude());
+                        latitudekml.add(location.getLatitude());
+                        altitudekml.add(location.getAltitude());
+
                         String gnsstime=
                                 String.format("%d,%d,%d,%d,%d,%13.7f",gnsstimeclock_a,gnsstimeclock_b,gnsstimeclock_c,gnsstimeclock_d,gnsstimeclock_e,gnsstimeclock_f);
                         arrayList1.add(gnsstime);
@@ -911,6 +917,7 @@ public class FileLogger implements GnssListener {
                     return;
                 }
 
+                /*
                 StringBuilder builder = new StringBuilder("Nav");
                 builder.append(RECORD_DELIMITER);
                 builder.append(navigationMessage.getSvid());
@@ -938,6 +945,8 @@ public class FileLogger implements GnssListener {
                 } catch (IOException e) {
                     logException(ERROR_WRITING_FILE, e);
                 }
+
+                 */
 
                 /*try {
                     if(RINEX_NAV_ION_OK == false) {
