@@ -802,6 +802,7 @@ public class FileLogger implements GnssListener {
         }
     }
 
+
     @Override
     public void onLocationStatusChanged(String provider, int status, Bundle extras) {}
 
@@ -1205,6 +1206,10 @@ public class FileLogger implements GnssListener {
                             if(index < 300) {
                                 if(SettingsFragment.usePseudorangeRate){
                                     LAST_SMOOTHED_PSEUDORANGE[index] = CURRENT_SMOOTHER_RATE[index] * prm + (1 - CURRENT_SMOOTHER_RATE[index]) * (LAST_SMOOTHED_PSEUDORANGE[index] + measurement.getPseudorangeRateMetersPerSecond());
+                                    CURRENT_SMOOTHER_RATE[index] = CURRENT_SMOOTHER_RATE[index] - SMOOTHER_RATE;
+                                    if (CURRENT_SMOOTHER_RATE[index] <= 0) {
+                                        CURRENT_SMOOTHER_RATE[index] = SMOOTHER_RATE;
+                                    }
                                     C1C = String.format("%14.3f%s%s", LAST_SMOOTHED_PSEUDORANGE[index], " ", " ");
                                 }else {
                                     if(measurement.getAccumulatedDeltaRangeState() == GnssMeasurement.ADR_STATE_VALID){
