@@ -1199,7 +1199,7 @@ public class FileLogger implements GnssListener {
                             index = index + 235;
                         }
                         if(!SettingsFragment.usePseudorangeRate && measurement.getAccumulatedDeltaRangeState() != GnssMeasurement.ADR_STATE_VALID){
-                            CURRENT_SMOOTHER_RATE[index] = 0.99;
+                            CURRENT_SMOOTHER_RATE[index] = 1.0;
                         }
                         //Pseudorange Smoother
                         if(SettingsFragment.usePseudorangeSmoother &&  prm != 0.0){
