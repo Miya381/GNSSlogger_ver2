@@ -352,6 +352,7 @@ private TextView mAccSpecView;
                             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
                                     //入力した文字をトースト出力する
+                                    /*
                                     if(editView.getText().toString().indexOf("aiueo1") != -1){
                                         Toast.makeText(getContext(),
                                                 "Research mode turned ON",
@@ -369,6 +370,8 @@ private TextView mAccSpecView;
                                                 Toast.LENGTH_LONG).show();
                                         ResearchModeSwitch.setChecked(false);
                                     }
+
+                                     */
                                 }
                             })
                             .setOnCancelListener(new DialogInterface.OnCancelListener() {
