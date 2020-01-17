@@ -45,7 +45,7 @@ public class FileLogger implements GnssListener {
     private final Context mContext;
 
     private final Object mFileLock = new Object();
-    private  final Object mFileSubLock = new Object();
+    private final Object mFileSubLock = new Object();
     private final Object mFileAccAzLock = new Object();
     private final Object mFileNmeaLock = new Object();
     private final Object mFileNavLock = new Object();
@@ -665,6 +665,7 @@ public class FileLogger implements GnssListener {
         try {
             mFileSubWriter.write("    </coordinates>\n  </LineString>\n</Placemark>\n</Document>\n</kml>\n");
             mFileSubWriter.newLine();
+
             for (int i=0; i<arrayList1.size(); i++){
                 mFileSubWriter.write(" <Placemark>\n");
                 mFileSubWriter.write("<name>"+arrayList1.get(i)+"\"</name>\"");
@@ -782,6 +783,11 @@ public class FileLogger implements GnssListener {
                                         location.getLongitude(),
                                         location.getLatitude(),
                                         location.getAltitude());
+
+                        longitudekml.add(location.getLongitude());
+                        latitudekml.add(location.getLatitude());
+                        altitudekml.add(location.getAltitude());
+
                         String gnsstime=
                                 String.format("%d,%d,%d,%d,%d,%13.7f",gnsstimeclock_a,gnsstimeclock_b,gnsstimeclock_c,gnsstimeclock_d,gnsstimeclock_e,gnsstimeclock_f);
                         arrayList1.add(gnsstime);
@@ -795,6 +801,7 @@ public class FileLogger implements GnssListener {
             }
         }
     }
+
 
     @Override
     public void onLocationStatusChanged(String provider, int status, Bundle extras) {}
@@ -910,6 +917,38 @@ public class FileLogger implements GnssListener {
                 if(mFileNavWriter == null){
                     return;
                 }
+
+                /*
+                StringBuilder builder = new StringBuilder("Nav");
+                builder.append(RECORD_DELIMITER);
+                builder.append(navigationMessage.getSvid());
+                builder.append(RECORD_DELIMITER);
+                builder.append(navigationMessage.getType());
+                builder.append(RECORD_DELIMITER);
+
+                int status = navigationMessage.getStatus();
+                builder.append(status);
+                builder.append(RECORD_DELIMITER);
+                builder.append(navigationMessage.getMessageId());
+                builder.append(RECORD_DELIMITER);
+                builder.append(navigationMessage.getSubmessageId());
+                byte[] data = navigationMessage.getData();
+
+                for (byte word : data) {
+                    builder.append(data);
+                    builder.append(RECORD_DELIMITER);
+                    builder.append(word);
+                }
+
+                try {
+                    mFileNavWriter.write(builder.toString());
+                    mFileNavWriter.newLine();
+                } catch (IOException e) {
+                    logException(ERROR_WRITING_FILE, e);
+                }
+
+                 */
+
                 /*try {
                     if(RINEX_NAV_ION_OK == false) {
                         StringBuilder NAV_ION = new StringBuilder();
@@ -929,7 +968,7 @@ public class FileLogger implements GnssListener {
             }
         }
     }
-    public void onSensorListener(String listener,float roll, float pitch, float azimuth,float accZ,float Altitude, float MagX,float MagY,float MagZ,float APIAzi){
+    public void onSensorListener(String listener,float roll, float pitch, float azimuth,float accZ,float Altitude, float AccX,float AccY,float AccZ,float APIAzi){
         synchronized (mFileAccAzLock) {
             if (mFileAccAzWriter == null || SettingsFragment.ResearchMode == false || !SettingsFragment.EnableSensorLog) {
                 return;
@@ -942,7 +981,7 @@ public class FileLogger implements GnssListener {
                         double Pitchdeg = Math.toDegrees(pitch);
                         double Rolldeg = Math.toDegrees(roll);
                         String SensorStream =
-                                String.format("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f", (float) (1 * Math.sin(azimuth)),(float) (1 * Math.cos(azimuth)),Altitude,Pitchdeg,Rolldeg,Azideg,accZ,MagX,MagY,MagZ,APIAzi);
+                                String.format("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f", (float) (1 * Math.sin(azimuth)),(float) (1 * Math.cos(azimuth)),Altitude,Pitchdeg,Rolldeg,Azideg,accZ,AccX,AccY,AccZ,APIAzi);
 
                         mFileAccAzWriter.write(SensorStream);
                         mFileAccAzWriter.newLine();
@@ -1160,13 +1199,17 @@ public class FileLogger implements GnssListener {
                             index = index + 235;
                         }
                         if(!SettingsFragment.usePseudorangeRate && measurement.getAccumulatedDeltaRangeState() != GnssMeasurement.ADR_STATE_VALID){
-                            CURRENT_SMOOTHER_RATE[index] = 0.99;
+                            CURRENT_SMOOTHER_RATE[index] = 1.0;
                         }
                         //Pseudorange Smoother
                         if(SettingsFragment.usePseudorangeSmoother &&  prm != 0.0){
                             if(index < 300) {
                                 if(SettingsFragment.usePseudorangeRate){
                                     LAST_SMOOTHED_PSEUDORANGE[index] = CURRENT_SMOOTHER_RATE[index] * prm + (1 - CURRENT_SMOOTHER_RATE[index]) * (LAST_SMOOTHED_PSEUDORANGE[index] + measurement.getPseudorangeRateMetersPerSecond());
+                                    CURRENT_SMOOTHER_RATE[index] = CURRENT_SMOOTHER_RATE[index] - SMOOTHER_RATE;
+                                    if (CURRENT_SMOOTHER_RATE[index] <= 0) {
+                                        CURRENT_SMOOTHER_RATE[index] = SMOOTHER_RATE;
+                                    }
                                     C1C = String.format("%14.3f%s%s", LAST_SMOOTHED_PSEUDORANGE[index], " ", " ");
                                 }else {
                                     if(measurement.getAccumulatedDeltaRangeState() == GnssMeasurement.ADR_STATE_VALID){

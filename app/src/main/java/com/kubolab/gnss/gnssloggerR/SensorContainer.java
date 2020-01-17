@@ -351,6 +351,7 @@ public class SensorContainer {
                     sensorRaw[5] = String.format("Ambient Pressure = %7.2f", Pressure);
                 }
 
+
                 //加速度センサーのWGS84系での下向きの加速度を求める
                 double az = - RawX * Math.sin(mRollY) + RawY * Math.sin((mPitchX)) + RawZ * Math.cos((mPitchX)) * Math.cos(mRollY);
                 double bx = RawX * Math.cos(mRollY) + RawZ * Math.sin(mRollY);
@@ -358,20 +359,24 @@ public class SensorContainer {
                 double ax = bx * Math.cos(mAzimuthZ) - by * Math.sin(mAzimuthZ);
                 double ay = bx * Math.sin(mAzimuthZ) + by * Math.cos(mAzimuthZ);
 
-                currentOrientationZValues = (float)az * 0.1f + currentOrientationZValues * (1.0f - 0.1f);
-                currentAccelerationZValues = (float)az - currentOrientationZValues;
+                //ローパスフィルタ
                 currentOrientationXValues = (float)ax * 0.1f + currentOrientationXValues * (1.0f - 0.1f);
-                currentAccelerationXValues = (float)ax - currentOrientationXValues;
                 currentOrientationYValues = (float)ay * 0.1f + currentOrientationYValues * (1.0f - 0.1f);
+                currentOrientationZValues = (float)az * 0.1f + currentOrientationZValues * (1.0f - 0.1f);
+
+                //ハイパスフィルタ
+                currentAccelerationXValues = (float)ax - currentOrientationXValues;
                 currentAccelerationYValues = (float)ay - currentOrientationYValues;
+                currentAccelerationZValues = (float)az - currentOrientationZValues;
+
+                //　CSVファイル出力
+                final float APIAzi = radianToDegrees(orientationValues[0]);
+                mFileLogger.onSensorListener("", (float) mPitchX, (float) mRollY, (float) mAzimuthZ, counter, Altitude, RawX, RawY, RawZ, APIAzi);
+
                 if(passcounter == true) {
                     if (currentAccelerationZValues <= -1.5) {
                         counter++;
                         passcounter = false;
-                        //　CSVファイル出力
-                        final float APIAzi = radianToDegrees(orientationValues[0]);
-                        mFileLogger.onSensorListener("", (float) mPitchX, (float) mRollY, (float) mAzimuthZ, counter, Altitude, MagX, MagY, MagZ, APIAzi);
-
                     }
                 }else{
                     if (currentAccelerationZValues >= 1.0) {
@@ -398,7 +403,6 @@ public class SensorContainer {
                 }
 
                 sensorRaw[0] = String.format("X = %7.4f, Y = %7.4f, Z = %7.4f", RawX, RawY, RawZ);
-
                 mLogger.onSensorRawListener(sensorRaw);
 
                 if(SettingsFragment.ResearchMode) {
