@@ -372,6 +372,10 @@ private TextView mAccSpecView;
                                     }
 
                                      */
+                                    outPutSensor.setEnabled(true);
+                                    useSBS.setEnabled(true);
+                                    outPutSensor.setEnabled(true);
+                                    RINEXNAVCheck.setEnabled(true);
                                 }
                             })
                             .setOnCancelListener(new DialogInterface.OnCancelListener() {
