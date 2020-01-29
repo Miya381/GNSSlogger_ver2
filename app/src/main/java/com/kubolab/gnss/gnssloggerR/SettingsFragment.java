@@ -372,7 +372,7 @@ private TextView mAccSpecView;
                                     }
 
                                      */
-                                    outPutSensor.setEnabled(true);
+                                    ResearchMode = true;
                                     useSBS.setEnabled(true);
                                     outPutSensor.setEnabled(true);
                                     RINEXNAVCheck.setEnabled(true);
