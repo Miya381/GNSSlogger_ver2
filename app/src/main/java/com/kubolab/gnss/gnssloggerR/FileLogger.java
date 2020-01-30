@@ -337,7 +337,7 @@ public class FileLogger implements GnssListener {
                     currentFileWriter.write("     0                                                      RCV CLOCK OFFS APPL ");
                     currentFileWriter.newLine();
                     if(SettingsFragment.CarrierPhase){
-                        currentFileWriter.write("G    4 L1C C1C D1C S1C                                      SYS / # / OBS TYPES ");
+                        currentFileWriter.write("G    4 C1C L1C D1C S1C                                      SYS / # / OBS TYPES ");
                         currentFileWriter.newLine();
                     }else {
                         currentFileWriter.write("G    3 C1C D1C S1C                                          SYS / # / OBS TYPES ");
@@ -345,7 +345,7 @@ public class FileLogger implements GnssListener {
                     }
                     if(SettingsFragment.useGL){
                         if(SettingsFragment.CarrierPhase){
-                            currentFileWriter.write("R    4 L1C C1C D1C S1C                                      SYS / # / OBS TYPES ");
+                            currentFileWriter.write("R    4 C1C L1C D1C S1C                                      SYS / # / OBS TYPES ");
                             currentFileWriter.newLine();
                         }else {
                             currentFileWriter.write("R    3 C1C D1C S1C                                          SYS / # / OBS TYPES ");
@@ -354,7 +354,7 @@ public class FileLogger implements GnssListener {
                     }
                     if(SettingsFragment.useQZ){
                         if(SettingsFragment.CarrierPhase){
-                            currentFileWriter.write("J    4 L1C C1C D1C S1C                                      SYS / # / OBS TYPES ");
+                            currentFileWriter.write("J    4 C1C L1C D1C S1C                                      SYS / # / OBS TYPES ");
                             currentFileWriter.newLine();
                         }else {
                             currentFileWriter.write("J    3 C1C D1C S1C                                          SYS / # / OBS TYPES ");
@@ -363,16 +363,16 @@ public class FileLogger implements GnssListener {
                     }
                     if(SettingsFragment.useGA){
                         if(SettingsFragment.CarrierPhase){
-                            currentFileWriter.write("E    4 L1C C1C D1C S1C                                      SYS / # / OBS TYPES ");
+                            currentFileWriter.write("E    4 C1X L1X D1X S1X                                      SYS / # / OBS TYPES ");
                             currentFileWriter.newLine();
                         }else {
-                            currentFileWriter.write("E    3 C1C D1C S1C                                          SYS / # / OBS TYPES ");
+                            currentFileWriter.write("E    3 C1X D1X S1X                                          SYS / # / OBS TYPES ");
                             currentFileWriter.newLine();
                         }
                     }
                     if(SettingsFragment.useBD){
                         if(SettingsFragment.CarrierPhase){
-                            currentFileWriter.write("C    4 L2I C2I D2I S2I                                      SYS / # / OBS TYPES ");
+                            currentFileWriter.write("C    4 C2I L2I D2I S2I                                      SYS / # / OBS TYPES ");
                             currentFileWriter.newLine();
                         }else {
                             currentFileWriter.write("C    3 C2I D2I S2I                                          SYS / # / OBS TYPES ");
@@ -435,7 +435,7 @@ public class FileLogger implements GnssListener {
                     //# / TYPES OF OBSERV
                     if (SettingsFragment.CarrierPhase) {
                         String NUMBEROFOBS = String.format("%-6d", 3);
-                        String OBSERV = String.format("%-54s", "    L1    C1    S1");
+                        String OBSERV = String.format("%-54s", "    C1    L1    S1");
                         currentFileWriter.write(NUMBEROFOBS + OBSERV + "# / TYPES OF OBSERV");
                         currentFileWriter.newLine();
                     } else {
@@ -1229,10 +1229,10 @@ public class FileLogger implements GnssListener {
                         //Fix用チェック
                         if (SettingsFragment.CarrierPhase) {
                             if(firstOBS) {
-                                Measurements.append(prn + L1C + C1C + D1C + S1C);
+                                Measurements.append(prn + C1C + L1C + D1C + S1C);
                                 firstOBS = false;
                             }else {
-                                Measurements.append("\n" + prn + L1C + C1C + D1C + S1C);
+                                Measurements.append("\n" + prn + C1C + L1C + D1C + S1C);
                             }
                         } else {
                             if(firstOBS) {
@@ -1378,7 +1378,7 @@ public class FileLogger implements GnssListener {
                         //Fix用チェック
                             String DbHz = String.format("%14.3f%s%s", measurement.getCn0DbHz(), " ", " ");
                             if (SettingsFragment.CarrierPhase) {
-                                Measurements.append(DeltaRangeStrings + PrmStrings + DbHz + "\n");
+                                Measurements.append(PrmStrings + DeltaRangeStrings + DbHz + "\n");
                             } else {
                                 Measurements.append(PrmStrings + DbHz + "\n");
                             }

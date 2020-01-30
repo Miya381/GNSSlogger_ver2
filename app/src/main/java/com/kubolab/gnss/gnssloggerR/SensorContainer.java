@@ -15,6 +15,7 @@ import java.util.List;
  * @author
  *
  */
+
 //確認let's note
 public class SensorContainer {
     //センサ生データ用
@@ -369,12 +370,11 @@ public class SensorContainer {
                 currentAccelerationYValues = (float)ay - currentOrientationYValues;
                 currentAccelerationZValues = (float)az - currentOrientationZValues;
 
-                //　CSVファイル出力
-                final float APIAzi = radianToDegrees(orientationValues[0]);
-                mFileLogger.onSensorListener("", (float) mPitchX, (float) mRollY, (float) mAzimuthZ, counter, Altitude, RawX, RawY, RawZ, APIAzi);
-
                 if(passcounter == true) {
                     if (currentAccelerationZValues <= -1.5) {
+                        //　CSVファイル出力
+                        final float APIAzi = radianToDegrees(orientationValues[0]);
+                        mFileLogger.onSensorListener("", (float) mPitchX, (float) mRollY, (float) mAzimuthZ, counter, Altitude, RawX, RawY, RawZ, APIAzi);
                         counter++;
                         passcounter = false;
                     }
